@@ -39,6 +39,22 @@ Simplified auto-update is supported on Windows if you use the default NSIS setup
 You can use a private repository for updates with electron-updater by setting the `GH_TOKEN` environment variable (on user machine) and `private` option.
 If `GH_TOKEN` is set, electron-updater will use the GitHub API for updates allowing private repositories to work.
 
+This can also be accomplished by calling the `setFeedURL` method just before you call `checkForUpdates`
+
+    autoUpdater.setFeedURL({
+    
+        'provider': 'github',
+        'owner': '[your github username]',
+        'repo': '[your github repo]',
+        // BE CAREFUL!  Anyone with this token has read/write access to your private and public repos
+        // Anyone who unpacks the asar file of your Electron app will see this token in plain text
+        'token': '[your personal access token set to "repo" scope]'
+    
+      });
+      autoUpdater.checkForUpdates();
+
+**WARNING** This is HUGE SECURITY RISK for private repos because you have to place a READ/WRITE token to your repo in the source code that is packaged with your app.  Even if the source code delivered as an asar file, the asar can be unpacked and viewed in plain text, exposing your token.  
+
 Only for [very special](https://github.com/electron-userland/electron-builder/issues/1393#issuecomment-288191885) cases — not intended and not suitable for all users. Doesn't work [on macOs](https://github.com/electron-userland/electron-builder/issues/1370).
 
 **Note:** The GitHub API currently has a rate limit of 5000 requests per user per hour. An update check uses up to 3 requests per check.
